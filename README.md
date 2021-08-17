@@ -2,8 +2,7 @@
 A library to collect, analyze & visualize NFT data on Ethereum.
 
 ## Installation
-
-+ conda env create --file conda-env-win10.yml
-+ conda activate nft_analytics
-+ python -m ipykernel install --name=nft_analytics
-+ jupyter labextension install jupyterlab-plotly
++ Create the conda environment from file `conda env create --file conda-env-win10.yml`
++ Activate environment `conda activate nft_analytics`
++ Add environment to Juopyter kernel `python -m ipykernel install --name=nft_analytics`
++ Install jupyter lab extensions for plotly `jupyter labextension install jupyterlab-plotly`
