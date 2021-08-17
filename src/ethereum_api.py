@@ -23,13 +23,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from config import INFURA_PROJECT_ID
-import requests
-from web3.contract import Contract
-from web3 import Web3
 import json
 import logging
 import sys
+
+import requests
+from web3 import Web3
+from web3.contract import Contract
+
+from config import INFURA_PROJECT_ID
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     stream=sys.stdout, level=logging.INFO)
