@@ -22,6 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 import json
 import logging
 import sys
@@ -37,7 +38,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 
-class NFT_Analytics(OpenSeaAPI):
+class NFTAnalytics(OpenSeaAPI):
     def __init__(self, asset_contract_address: str):
         super().__init__(asset_contract_address)
 

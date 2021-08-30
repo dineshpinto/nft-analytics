@@ -4,6 +4,7 @@ config.py
 *.jpg
 *.json
 *.xlsx
+*.log
 
 # User-specific stuff
 .idea/**/workspace.xml
