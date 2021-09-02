@@ -129,3 +129,16 @@ class NFTAnalytics(OpenSeaAPI):
             median_prices.append(self.get_trait_type_median_price(asset_data, trait_type)[trait_value])
 
         return np.array(median_prices)
+
+    def get_traits_with_median_prices(self, asset_data: list, asset: dict) -> dict:
+        traits = {}
+        for trait in asset["traits"]:
+            traits[trait["trait_type"]] = trait["value"]
+
+        trait_prices = {}
+
+        for trait_type, trait_value in traits.items():
+            price = self.get_trait_type_median_price(asset_data, trait_type)[trait_value]
+            trait_prices[trait_value + " " + trait_type] = price
+
+        return trait_prices
