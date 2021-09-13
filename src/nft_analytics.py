@@ -25,6 +25,7 @@ SOFTWARE.
 
 import json
 import logging
+import os
 import sys
 from json import JSONDecodeError
 
@@ -41,6 +42,21 @@ logger = logging.getLogger(__name__)
 class NFTAnalytics(OpenSeaAPI):
     def __init__(self, asset_contract_address: str):
         super().__init__(asset_contract_address)
+
+    @staticmethod
+    def make_directories(folder_name: str):
+        data_folder = os.path.join("data", folder_name)
+        result_folder = os.path.join("results", folder_name)
+
+        if not os.path.isdir(data_folder):
+            logger.info(f"Making directoy {data_folder}")
+            os.makedirs(data_folder)
+
+        if not os.path.isdir(result_folder):
+            logger.info(f"Making directoy {result_folder}")
+            os.makedirs(result_folder)
+
+        return data_folder, result_folder
 
     def fetch_data(self, max_offset: int = 10000) -> list:
         local_assets = []
