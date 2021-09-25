@@ -53,17 +53,21 @@ class OpenSeaAPI:
     def get_floor_price(self, asset_data: list) -> float:
         url = self.base_url + "collections"
 
-        querystring = {
-            "asset_owner": asset_data[0]["owner"]["address"],
-        }
-        response = requests.request("GET", url, headers={"Accept": "application/json"}, params=querystring)
-        json_response = json.loads(response.text)
-
         floor_price = 0
-        for item in json_response:
-            if item["primary_asset_contracts"][0]["address"].lower() == self.asset_contract_address.lower():
-                floor_price = float(item["stats"]["floor_price"])
+        addr_id = 0
 
+        while floor_price == 0:
+            querystring = {
+                "asset_owner": asset_data[addr_id]["owner"]["address"],
+            }
+            response = requests.request("GET", url, headers={"Accept": "application/json"}, params=querystring)
+            json_response = json.loads(response.text)
+
+            for item in json_response:
+                if item["primary_asset_contracts"]:
+                    if item["primary_asset_contracts"][0]["address"].lower() == self.asset_contract_address.lower():
+                        floor_price = float(item["stats"]["floor_price"])
+            addr_id += 10
         return floor_price
 
     def get_successful_event_data(self, offset: int = 0, limit: int = 10) -> dict:

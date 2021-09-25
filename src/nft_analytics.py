@@ -31,8 +31,9 @@ from json import JSONDecodeError
 
 import numpy as np
 from tqdm import tqdm
-
+import pandas as pd
 from .opensea_api import OpenSeaAPI
+from .ethereum_api import EthereumAPI
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     stream=sys.stdout, level=logging.INFO)
@@ -42,6 +43,7 @@ logger = logging.getLogger(__name__)
 class NFTAnalytics(OpenSeaAPI):
     def __init__(self, asset_contract_address: str):
         super().__init__(asset_contract_address)
+        self.eth_api = EthereumAPI()
 
     @staticmethod
     def make_directories(folder_name: str):
@@ -106,6 +108,7 @@ class NFTAnalytics(OpenSeaAPI):
     def save_json(asset_data: list, filename: str = "data.json"):
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(asset_data, f, ensure_ascii=False, indent=4)
+        logger.info(f"Saved asset data to {filename}")
 
     @staticmethod
     def load_json(filename: str = "data.json") -> list:
@@ -158,3 +161,46 @@ class NFTAnalytics(OpenSeaAPI):
             trait_prices[trait_value + " " + trait_type] = price
 
         return trait_prices
+
+    def get_nft_holdings(self, asset_data: list, asset_name: str, eth_balances: bool = True) \
+            -> pd.DataFrame:
+        nfts_held = {}
+
+        for asset in asset_data:
+            nfts_held[asset["owner"]["address"]] = 0
+
+        for asset in asset_data:
+            nfts_held[asset["owner"]["address"]] += 1
+
+        logger.info(f"Total NFTs in collection = {sum(nfts_held.values())}")
+
+        if eth_balances:
+            logger.info(f"Getting NFT holdings and ETH balances...")
+            df = pd.DataFrame(columns=["Address", asset_name, "ETH_balance"])
+
+            pbar = tqdm(nfts_held.items())
+
+            for idx, (address, num_nfts) in enumerate(pbar):
+                pbar.set_description(f"{idx}")
+                df.loc[idx] = [address, num_nfts, self.eth_api.get_eth_balance(address)]
+        else:
+            logger.info(f"Getting NFT holdings...")
+            df = pd.DataFrame(columns=["Address", asset_name])
+
+            pbar = tqdm(nfts_held.items())
+
+            for idx, (address, num_nfts) in enumerate(pbar):
+                pbar.set_description(f"{idx}")
+                df.loc[idx] = [address, num_nfts]
+
+        etherscan_links = []
+        for address in df["Address"]:
+            etherscan_links.append(f"https://etherscan.io/address/{address}")
+        df["Etherscan_link"] = etherscan_links
+
+        opensea_links = []
+        for address in df["Address"]:
+            opensea_links.append(f"https://opensea.io/{address}")
+        df["OpenSea_link"] = opensea_links
+
+        return df
