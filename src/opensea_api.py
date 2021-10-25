@@ -68,6 +68,7 @@ class OpenSeaAPI:
                     if item["primary_asset_contracts"][0]["address"].lower() == self.asset_contract_address.lower():
                         floor_price = float(item["stats"]["floor_price"])
             addr_id += 10
+        logger.info(f"floor price is {floor_price} ETH")
         return floor_price
 
     def get_successful_event_data(self, offset: int = 0, limit: int = 10) -> dict:
