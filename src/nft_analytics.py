@@ -60,14 +60,14 @@ class NFTAnalytics(OpenSeaAPI):
 
         return data_folder, result_folder
 
-    def fetch_data(self, max_offset: int = 10000) -> list:
+    def fetch_data(self, max_offset: int = 10000, collection: str = None) -> list:
         local_assets = []
 
         pbar = tqdm(range(0, max_offset + 1, 50))
         for offset in pbar:
             pbar.set_description(f"{offset}")
             try:
-                asset_data = self.get_asset_data(offset=offset, limit=50)
+                asset_data = self.get_asset_data(offset=offset, limit=50, collection=collection)
             except JSONDecodeError:
                 logger.error(f"Only fetched data till offset={offset - 1}. "
                              f"Warning={self.get_asset_data(offset=offset, limit=50)}")
@@ -202,5 +202,24 @@ class NFTAnalytics(OpenSeaAPI):
         for address in df["Address"]:
             opensea_links.append(f"https://opensea.io/{address}")
         df["OpenSea_link"] = opensea_links
+
+        return df
+
+    @staticmethod
+    def calculate_rarity_df(asset_data: list, items_in_collection: int) -> pd.DataFrame:
+        df = pd.DataFrame(columns=["Name", "Price", "Rarity", "RarityPriceRatio"])
+
+        for idx, asset in enumerate(asset_data):
+            if asset["sell_orders"]:
+                if asset["sell_orders"][0]["payment_token_contract"]["symbol"] == "ETH":
+                    price = float(asset["sell_orders"][0]["current_price"]) / 1e18
+                    if price != 0:
+                        rarity = 0
+                        for trait in asset["traits"]:
+                            trait_count = int(trait["trait_count"])
+                            if trait_count != 0:
+                                rarity += 1 / (trait_count / items_in_collection)
+                        name = asset["name"]
+                        df.loc[idx] = [name, price, rarity, rarity / price]
 
         return df

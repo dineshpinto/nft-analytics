@@ -5,6 +5,7 @@ config.py
 *.json
 *.xlsx
 *.log
+*.csv
 
 # User-specific stuff
 .idea/**/workspace.xml

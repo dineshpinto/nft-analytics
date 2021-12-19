@@ -84,7 +84,7 @@ class OpenSeaAPI:
 
         return json.loads(response.text)
 
-    def get_asset_data(self, offset: int = 0, limit: int = 50) -> dict:
+    def get_asset_data(self, offset: int = 0, limit: int = 50, collection: str = None) -> dict:
         url = self.base_url + "assets"
 
         querystring = {
@@ -92,6 +92,10 @@ class OpenSeaAPI:
             "limit": str(limit),
             "asset_contract_address": self.asset_contract_address,
         }
+
+        if collection:
+            querystring["collection"] = collection
+
         response = requests.request("GET", url, headers={"Accept": "application/json"}, params=querystring)
 
         return json.loads(response.text)
