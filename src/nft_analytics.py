@@ -33,7 +33,7 @@ import numpy as np
 from tqdm import tqdm
 import pandas as pd
 from .opensea_api import OpenSeaAPI
-from .ethereum_api import EthereumAPI
+from .infura_api import InfuraAPI
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     stream=sys.stdout, level=logging.INFO)
@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 class NFTAnalytics(OpenSeaAPI):
     def __init__(self, asset_contract_address: str):
         super().__init__(asset_contract_address)
-        self.eth_api = EthereumAPI()
+        self.eth_api = InfuraAPI()
 
     @staticmethod
     def make_directories(folder_name: str):
