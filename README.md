@@ -14,7 +14,7 @@ NFT Analytics is a Python framework to make that process easier. It contains cod
     + ```python -m ipykernel install --name=nft_analytics```
 4. Install jupyter lab extensions for plotly 
    + ```jupyter labextension install jupyterlab-plotly```
-5. To use the Infura backend, rename `config-dummy.py`to `config.py`, and add in your private Infura API key
+5. To use the Infura backend (required for querying blockchain data), rename `config-dummy.py`to `config.py`, and add in your private Infura API key
 6. Explore the various Jupyterlab Notebooks under `notebooks/`
 
 ## APIs used

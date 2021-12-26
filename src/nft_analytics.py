@@ -30,10 +30,11 @@ import sys
 from json import JSONDecodeError
 
 import numpy as np
-from tqdm import tqdm
 import pandas as pd
-from .opensea_api import OpenSeaAPI
+from tqdm import tqdm
+
 from .infura_api import InfuraAPI
+from .opensea_api import OpenSeaAPI
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     stream=sys.stdout, level=logging.INFO)
@@ -47,6 +48,7 @@ class NFTAnalytics(OpenSeaAPI):
 
     @staticmethod
     def make_directories(folder_name: str):
+        """ Set up directories for data and results if they don't exist. """
         data_folder = os.path.join("data", folder_name)
         result_folder = os.path.join("results", folder_name)
 
@@ -61,6 +63,10 @@ class NFTAnalytics(OpenSeaAPI):
         return data_folder, result_folder
 
     def fetch_data(self, max_offset: int = 10000, collection: str = None) -> list:
+        """
+        Query OpenSea API for collection data, offset is shifted until max
+        offset is reached (i.e. number of items in a collection).
+        """
         local_assets = []
 
         pbar = tqdm(range(0, max_offset + 1, 50))
@@ -83,6 +89,10 @@ class NFTAnalytics(OpenSeaAPI):
         return local_assets
 
     def fetch_events(self, max_offset: int = 10000) -> list:
+        """
+        Query OpenSea API for event data, offset is shifted until max
+        offset is reached (i.e. number of items in a collection).
+        """
         local_events = []
 
         pbar = tqdm(range(0, max_offset + 1, 300))
@@ -119,6 +129,7 @@ class NFTAnalytics(OpenSeaAPI):
 
     @staticmethod
     def get_trait_values_for_type(asset_data: list, trait_type: str) -> list:
+        """ Get all possible values of traits for a specific type of trait. """
         trait_values = []
         for asset in asset_data:
             for traits in asset["traits"]:
@@ -128,6 +139,7 @@ class NFTAnalytics(OpenSeaAPI):
         return trait_values
 
     def get_trait_type_median_price(self, asset_data: list, trait_type: str) -> dict:
+        """ Get the median price of a specific trait type. """
         trait_value_prices = {}
         for value in self.get_trait_values_for_type(asset_data, trait_type):
             listing_prices_trait = []
@@ -143,6 +155,7 @@ class NFTAnalytics(OpenSeaAPI):
         return dict(sorted(trait_value_prices.items(), key=lambda item: item[1], reverse=True))
 
     def get_median_prices(self, asset_data: list, traits_dict: dict) -> np.ndarray:
+        """ Get median prices of all trait types. """
         median_prices = []
         for trait_type, trait_value in traits_dict.items():
             median_prices.append(self.get_trait_type_median_price(asset_data, trait_type)[trait_value])
@@ -150,6 +163,7 @@ class NFTAnalytics(OpenSeaAPI):
         return np.array(median_prices)
 
     def get_traits_with_median_prices(self, asset_data: list, asset: dict) -> dict:
+        """ Get median prices of trait types for specific asset. """
         traits = {}
         for trait in asset["traits"]:
             traits[trait["trait_type"]] = trait["value"]
@@ -164,6 +178,7 @@ class NFTAnalytics(OpenSeaAPI):
 
     def get_nft_holdings(self, asset_data: list, asset_name: str, eth_balances: bool = True) \
             -> pd.DataFrame:
+        """ Query the number of NFTs held and/or the ETH balances of addresses in a collection.  """
         nfts_held = {}
 
         for asset in asset_data:
@@ -207,6 +222,18 @@ class NFTAnalytics(OpenSeaAPI):
 
     @staticmethod
     def calculate_rarity_df(asset_data: list, items_in_collection: int) -> pd.DataFrame:
+        """
+        Calculate rarity of a particular trait.
+
+        Uses the formula from rarity tools, full article at:
+            raritytools.medium.com/ranking-rarity-understanding-rarity-calculation-methods-86ceaeb9b98c
+
+        Formula:
+        [Rarity Score for a Trait Value] =
+            1 / ([Number of Items with that Trait Value] / [Total Number of Items in Collection])
+
+        The total Rarity Score for an NFT is the sum of the Rarity Score of all of its trait values.
+        """
         df = pd.DataFrame(columns=["Name", "Price", "Rarity", "RarityPriceRatio"])
 
         for idx, asset in enumerate(asset_data):

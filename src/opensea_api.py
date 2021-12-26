@@ -43,9 +43,7 @@ class OpenSeaAPI:
         self.base_url = "https://api.opensea.io/api/v1/"
 
     def get_eth_usd_price(self) -> float:
-        coin_id = "ethereum"
-        vs_currency = "usd"
-        return float(self.cg.get_price(ids=coin_id, vs_currencies=vs_currency)[coin_id][vs_currency])
+        return float(self.cg.get_price(ids="ethereum", vs_currencies="usd")["ethereum"]["usd"])
 
     def request_last_sales(self) -> list:
         return self.parse_successful_event_data(self.get_successful_event_data())
@@ -205,8 +203,3 @@ class OpenSeaAPI:
         for i in range(self.asset_limit):
             sales_ids.append(sales_list[i]['sale_id'])
         return sales_ids
-
-
-if __name__ == "__main__":
-    os_api = OpenSeaAPI(asset_contract_address="0xA0F38233688bB578c0a88102A95b846c18bc0bA7")
-    os_api.request_last_sales()
