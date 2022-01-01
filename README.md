@@ -21,5 +21,8 @@ NFT Analytics is a Python framework to make that process easier. It contains cod
 - OpenSea public API (`src/opensea_api.py`)
 - Infura private API (`src/infura_api.py`)
 
+### Export conda environment
+```conda env export --no-builds | grep -v "^prefix: " > conda-env.yml```
+
 ## Disclaimer
 This project is only for educational purposes, always do your own research before making any investment decisions.
