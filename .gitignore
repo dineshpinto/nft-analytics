@@ -6,6 +6,7 @@ config.py
 *.xlsx
 *.log
 *.csv
+notebooks/Web3Test.ipynb
 
 # User-specific stuff
 .idea/**/workspace.xml
