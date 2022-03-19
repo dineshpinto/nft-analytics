@@ -7,13 +7,21 @@ NFT Analytics is a Python framework to make that process easier. It contains cod
 
 ## Installation
 1. Create the conda environment from file
-   + ```conda env create --file conda-env.yml```
+```shell
+conda env create --file conda-env.yml
+```
 2. Activate environment 
-   + ```conda activate nft_analytics```
+```shell
+conda activate nft_analytics
+```
 3. Add environment to Jupyter kernel 
-    + ```python -m ipykernel install --name=nft_analytics```
+```shell
+python -m ipykernel install --name=nft_analytics
+```
 4. Install jupyter lab extensions for plotly 
-   + ```jupyter labextension install jupyterlab-plotly```
+```shell
+jupyter labextension install jupyterlab-plotly
+```
 5. To use the Infura backend (required for querying blockchain data), rename `config-dummy.py`to `config.py`, and add in your private Infura API key
 6. Explore the various Jupyterlab Notebooks under `notebooks/`
 
@@ -22,7 +30,9 @@ NFT Analytics is a Python framework to make that process easier. It contains cod
 - Infura private API (`src/infura_api.py`)
 
 ### Export conda environment
-```conda env export --no-builds | grep -v "^prefix: " > conda-env.yml```
+```shell
+conda env export --no-builds | grep -v "^prefix: " > conda-env.yml
+```
 
 ## Disclaimer
 This project is only for educational purposes, always do your own research before making any investment decisions.
