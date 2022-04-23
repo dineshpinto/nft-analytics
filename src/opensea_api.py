@@ -123,6 +123,12 @@ class OpenSeaAPI:
 
         return json.loads(response.text)
 
+    def get_single_collection_data(self, collection_slug: str) -> dict:
+        url = self.base_url + f"collection/{collection_slug}"
+
+        response = requests.get(url, headers={"Accept": "application/json"})
+        return json.loads(response.text)
+
     def get_account_data(self) -> dict:
         url = self.base_url + "accounts"
 
