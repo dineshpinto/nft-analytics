@@ -2,10 +2,9 @@
 
 .mystyle {
     font-size: 11pt;
-    font-family: Helvetica (sans-serif);
+    font-family: sans-serif;
     border-collapse: collapse;
     border: 1px solid silver;
-
 }
 
 .mystyle td, th {
